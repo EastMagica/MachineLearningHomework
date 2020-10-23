@@ -10,7 +10,10 @@ import abc
 import numpy as np
 
 
-class GradientDescent(metaclass=abc.ABCMeta):
+class GradientDescent(object):
+    """
+    梯度下降法
+    """
     def __init__(self, learning_rate=0.01):
         self.learning_rate = learning_rate
 
@@ -19,6 +22,9 @@ class GradientDescent(metaclass=abc.ABCMeta):
 
 
 class Momentum(GradientDescent):
+    """
+    冲量法梯度下降
+    """
     def __init__(self, learning_rate=0.01, beta=0.9):
         super().__init__(learning_rate)
         self.v = None

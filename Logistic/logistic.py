@@ -24,22 +24,34 @@ def logistic_diff(x):
 # -------
 
 class Logistic(object):
-    def __init__(self, size, optimizer, iteration=100):
+    def __init__(self, size, optimizer, iteration=100, use_bias=True):
+        """
+
+        Parameters
+        ----------
+        size: int
+            if use bias, size+=1.
+        optimizer: GradientDescent
+            gradient descent method.
+        iteration: int
+            training rounds.
+        """
         self.iteration = iteration
         self.optimizer = optimizer
-        self.size = size
+        self.use_bias = use_bias
+        self.size = size + 1 if self.use_bias else size
         self.w = np.zeros(self.size)
 
     def train(self, x, y):
-        x = np.hstack([
-            x, np.zeros((x.shape[0], 1))
-        ])
+        if self.use_bias is True:
+            x = self.padding(x)
         self.w = np.random.standard_normal(self.size)
         cross_entropy_array = np.zeros(self.iteration)
         accuracy_array = np.zeros(self.iteration)
         for i in range(self.iteration):
             y_hat = self.predict(x)
             grad = (y_hat - y) @ x / x.shape[1]
+            print("grad: {}".format(self.optimizer.delta(grad)))
             self.w += self.optimizer.delta(grad)
             cross_entropy_array[i] = np.mean(
                 -y @ np.log(y_hat) - (1 - y) @ np.log(1 - y_hat)
@@ -54,4 +66,11 @@ class Logistic(object):
     def predict(self, x):
         return logistic(
             x @ self.w
+        )
+
+    @staticmethod
+    def padding(x):
+        return np.pad(
+            x, ((0, 0), (0, 1)),
+            "constant", constant_values=1.
         )

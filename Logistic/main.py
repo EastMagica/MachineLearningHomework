@@ -17,9 +17,10 @@ from logistic import Logistic
 # ---------
 
 def load_data(filename="data.csv"):
-    return np.loadtxt(
+    data = np.loadtxt(
         filename, delimiter=","
     )
+    return data[:, :-1], data[:, -1]
 
 
 def plot(cross_entropy, accuracy):
@@ -38,19 +39,20 @@ def plot(cross_entropy, accuracy):
 
 
 if __name__ == "__main__":
-    data = load_data()
+    x, y = load_data()
     lr = Logistic(
-        size=data.shape[1],
+        size=x.shape[1],
         # optimizer=GradientDescent(
-        #     learning_rate=0.5
+        #     learning_rate=0.1
         # ),
         optimizer=Momentum(
-            learning_rate=0.5
+            learning_rate=0.5,
+            beta=0.9
         ),
         iteration=100
     )
     ce, ac = lr.train(
-        data[:, :-1], data[:, -1]
+        x, y
     )
 
     plot(ce, ac)
